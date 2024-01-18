@@ -3,9 +3,8 @@
  * \brief GPT12 INCRENC details
  * \ingroup IfxLld_Gpt12
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  * \defgroup IfxLld_Gpt12_IncrEnc INCRENC
  * \ingroup IfxLld_Gpt12
@@ -415,4 +413,5 @@ IFX_EXTERN void IfxGpt12_IncrEnc_update(IfxGpt12_IncrEnc *driver);
  * \return TRUE on success else FALSE
  */
 IFX_EXTERN boolean IfxGpt12_IncrEnc_stdIfPosInit(IfxStdIf_Pos *stdif, IfxGpt12_IncrEnc *driver);
+
 #endif /* IFXGPT12_INCRENC_H */

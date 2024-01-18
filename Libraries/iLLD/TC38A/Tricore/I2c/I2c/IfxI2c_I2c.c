@@ -2,9 +2,8 @@
  * \file IfxI2c_I2c.c
  * \brief I2C I2C details
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -68,21 +67,19 @@ void IfxI2c_I2c_initConfig(IfxI2c_I2c_Config *config, Ifx_I2C *i2c)
 
 void IfxI2c_I2c_initDevice(IfxI2c_I2c_Device *i2cDevice, const IfxI2c_I2c_deviceConfig *i2cDeviceConfig)
 {
-    i2cDevice->i2c                 = i2cDeviceConfig->i2c;
-    i2cDevice->deviceAddress       = i2cDeviceConfig->deviceAddress;
-    i2cDevice->addressMode         = i2cDeviceConfig->addressMode;
-    i2cDevice->speedMode           = i2cDeviceConfig->speedMode;
-    i2cDevice->enableRepeatedStart = i2cDeviceConfig->enableRepeatedStart;
+    i2cDevice->i2c           = i2cDeviceConfig->i2c;
+    i2cDevice->deviceAddress = i2cDeviceConfig->deviceAddress;
+    i2cDevice->addressMode   = i2cDeviceConfig->addressMode;
+    i2cDevice->speedMode     = i2cDeviceConfig->speedMode;
 }
 
 
 void IfxI2c_I2c_initDeviceConfig(IfxI2c_I2c_deviceConfig *i2cDeviceConfig, IfxI2c_I2c *i2c)
 {
-    i2cDeviceConfig->i2c                 = i2c;
-    i2cDeviceConfig->deviceAddress       = 0xff;
-    i2cDeviceConfig->addressMode         = IfxI2c_AddressMode_7Bit;
-    i2cDeviceConfig->speedMode           = IfxI2c_Mode_StandardAndFast;
-    i2cDeviceConfig->enableRepeatedStart = FALSE;
+    i2cDeviceConfig->i2c           = i2c;
+    i2cDeviceConfig->deviceAddress = 0xff;
+    i2cDeviceConfig->addressMode   = IfxI2c_AddressMode_7Bit;
+    i2cDeviceConfig->speedMode     = IfxI2c_Mode_StandardAndFast;
 }
 
 
@@ -187,12 +184,11 @@ IfxI2c_I2c_Status IfxI2c_I2c_read(IfxI2c_I2c_Device *i2cDevice, volatile uint8 *
 
     IfxI2c_setReceivePacketSize(i2c, size);   // set number of bytes to reveive
     IfxI2c_writeFifo(i2c, packet);
-
-    /* Poll until aribtration lost, nack, or rx mode flag is reset */
-    while ((i2c->PIRQSS.U & ((1 << IFX_I2C_PIRQSS_AL_OFF) | (1 << IFX_I2C_PIRQSM_TX_END_OFF) | (1 << IFX_I2C_PIRQSS_RX_OFF))) == FALSE)
-    {}
-
     IfxI2c_clearAllDtrInterruptSources(i2c);
+
+    /* Poll until aribtration lost, nack, or rx mode flag is reset, or the error is gone*/
+    while ((i2c->PIRQSS.U & ((1 << IFX_I2C_PIRQSS_AL_OFF) | (1 << IFX_I2C_PIRQSS_NACK_OFF) | (1 << IFX_I2C_PIRQSS_RX_OFF))) || i2c->ERRIRQSS.U)
+    {}
 
     /* check status*/
     if (i2c->ERRIRQSS.U)
@@ -235,7 +231,7 @@ IfxI2c_I2c_Status IfxI2c_I2c_read(IfxI2c_I2c_Device *i2cDevice, volatile uint8 *
                     bytesToReceive = 0;
                 }
 
-                uint32 ris = 0;
+                uint32 ris;
 
                 while (!(ris = i2c->RIS.U)) // wait for fifo request or error
 
@@ -381,18 +377,7 @@ IfxI2c_I2c_Status IfxI2c_I2c_read(IfxI2c_I2c_Device *i2cDevice, volatile uint8 *
     IfxI2c_clearAllErrorInterruptSources(i2c);
     IfxI2c_clearAllProtocolInterruptSources(i2c);
 
-    if (!i2cDevice->enableRepeatedStart)
-    {
-        IfxI2c_releaseBus(i2c);
-    }
-    else
-    {   // wait until bus is free
-        while (IfxI2c_getProtocolInterruptSourceStatus(i2c, IfxI2c_ProtocolInterruptSource_transmissionEnd) == FALSE)
-        {}
-
-        IfxI2c_clearProtocolInterruptSource(i2c, IfxI2c_ProtocolInterruptSource_transmissionEnd);
-    }
-
+    IfxI2c_releaseBus(i2c);
     i2cDevice->i2c->busStatus = IfxI2c_getBusStatus(i2c);
     i2cDevice->i2c->status    = status;
     return status;
@@ -550,11 +535,6 @@ IfxI2c_I2c_Status IfxI2c_I2c_write(IfxI2c_I2c_Device *i2cDevice, volatile uint8 
             }
 
             IfxI2c_writeFifo(i2c, txdata.packet);
-
-            /* our write to FIFO will trigger any of the request source, we wait for it */
-            while (!(i2c->RIS.U)) // wait for fifo request or error
-            {}
-
             IfxI2c_clearAllDtrInterruptSources(i2c);
         }
 
@@ -583,19 +563,7 @@ IfxI2c_I2c_Status IfxI2c_I2c_write(IfxI2c_I2c_Device *i2cDevice, volatile uint8 
         }
     }
 
-    if (!i2cDevice->enableRepeatedStart)
-    {
-        IfxI2c_releaseBus(i2c);
-    }
-    else
-    {
-        //wait until bus is free
-        while (IfxI2c_getProtocolInterruptSourceStatus(i2c, IfxI2c_ProtocolInterruptSource_transmissionEnd) == FALSE)
-        {}
-
-        IfxI2c_clearProtocolInterruptSource(i2c, IfxI2c_ProtocolInterruptSource_transmissionEnd);
-    }
-
+    IfxI2c_releaseBus(i2c);
     i2cDevice->i2c->busStatus = IfxI2c_getBusStatus(i2c);
     i2cDevice->i2c->status    = status;
     return status;

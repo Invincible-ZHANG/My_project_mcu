@@ -11,40 +11,40 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
-#define CAN_MESSAGE_TX_ID0          (uint32)0x12345678
+#define CAN_MESSAGE_TX_ID0 (uint32)0x12345678
 /* Pin to CAN transceiver TJA1043T */
-#define CAN_EN_PIN                  &MODULE_P23,2       
-#define CAN_STB_PIN                 &MODULE_P23,4
+#define CAN_EN_PIN &MODULE_P23, 2
+#define CAN_STB_PIN &MODULE_P23, 4
 
+#define ISR_PRIORITY_CAN_RX 88 /* Define the CAN RX interrupt priority              */
+#define ISR_PRIORITY_CAN_TX 89 /* Define the CAN RX interrupt priority              */
 
-#define ISR_PRIORITY_CAN_RX         88                           /* Define the CAN RX interrupt priority              */
-#define ISR_PRIORITY_CAN_TX         89                           /* Define the CAN RX interrupt priority              */
-
-#define DO_NOT_CARE_BUFFER_INDEX    (IfxCan_RxBufferId)0     //why not care the receive data?
-#define DO_NOT_CARE_ID2_VALUE       (uint32)0      
+#define DO_NOT_CARE_BUFFER_INDEX (IfxCan_RxBufferId)0 // why not care the receive data?
+#define DO_NOT_CARE_ID2_VALUE (uint32)0
 
 /* Sleep mode test   */
 
-#define ISR_PRIORITY_STM    20                  /* STM Interrupt priority for interrupt ISR                         */
-#define STM                 &MODULE_STM0        /* STM0 module is used in this example 
+#define ISR_PRIORITY_STM 20 /* STM Interrupt priority for interrupt ISR                         */
+#define STM &MODULE_STM0    /* STM0 module is used in this example \
                              */
-#define PMSWCR1_CPUSEL      0x1                 /* Set the CPU0 as CPU master                                       */
-#define PMCSR0_REQSLP       0x2                 /* Request sleep mode                                               */
+#define PMSWCR1_CPUSEL 0x1  /* Set the CPU0 as CPU master                                       */
+#define PMCSR0_REQSLP 0x2   /* Request sleep mode                                               */
 
-#define BLOCK_SLEEP_MODE    0x1                 /* Block sleep mode for STM                                         */
+#define BLOCK_SLEEP_MODE 0x1 /* Block sleep mode for STM                                         */
 
+#define A2B_PIN &MODULE_P00, 5
 
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
-McmcanType                          g_mcmcan;                                   /* Structure for handling MCMCAN     */
+McmcanType g_mcmcan; /* Structure for handling MCMCAN     */
 uint8 g_TxTransTestData[IfxCan_DataLengthCode_8] = {0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10};
 
 /* Definition of CAN messages lengths */
-const uint8                         g_dlcLookUpTable[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64 };
+const uint8 g_dlcLookUpTable[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
 
 /* Debug only */
-boolean                             g_NeedPrint_CanNewMseg = FALSE;             /* Global flag for SPI Tx ISR debug mseg print */
+boolean g_NeedPrint_CanNewMseg = FALSE; /* Global flag for SPI Tx ISR debug mseg print */
 
 /* ====================================================================================================================
  * CAN filter configuration:
@@ -72,15 +72,15 @@ boolean                             g_NeedPrint_CanNewMseg = FALSE;             
  * ====================================================================================================================
  */
 IfxCan_Filter g_filterStandardIdConfiguration[] =
-{
-    { 0, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x123, 0x123,                   DO_NOT_CARE_BUFFER_INDEX },
-    { 1, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x456, 0x456,                   DO_NOT_CARE_BUFFER_INDEX },
-    { 2, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x789, 0x789,                   DO_NOT_CARE_BUFFER_INDEX },
-//    { 3, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x189, 0x189,                   DO_NOT_CARE_BUFFER_INDEX },
-//    { 4, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_classic,  0x200, 0x39F,                   DO_NOT_CARE_BUFFER_INDEX },
-//    { 5, IfxCan_FilterElementConfiguration_rejectId,        IfxCan_FilterType_classic,  0x201, 0x39F,                   DO_NOT_CARE_BUFFER_INDEX },
-//    { 6, IfxCan_FilterElementConfiguration_storeInRxBuffer, IfxCan_FilterType_none,     0x325, DO_NOT_CARE_ID2_VALUE,   IfxCan_RxBufferId_2 },
-//    { 7, IfxCan_FilterElementConfiguration_storeInRxBuffer, IfxCan_FilterType_none,     0x326, DO_NOT_CARE_ID2_VALUE,   IfxCan_RxBufferId_5 }
+    {
+        {0, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x123, 0x123, DO_NOT_CARE_BUFFER_INDEX},
+        {1, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x456, 0x456, DO_NOT_CARE_BUFFER_INDEX},
+        {2, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x789, 0x789, DO_NOT_CARE_BUFFER_INDEX},
+        //    { 3, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x189, 0x189,                   DO_NOT_CARE_BUFFER_INDEX },
+        //    { 4, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_classic,  0x200, 0x39F,                   DO_NOT_CARE_BUFFER_INDEX },
+        //    { 5, IfxCan_FilterElementConfiguration_rejectId,        IfxCan_FilterType_classic,  0x201, 0x39F,                   DO_NOT_CARE_BUFFER_INDEX },
+        //    { 6, IfxCan_FilterElementConfiguration_storeInRxBuffer, IfxCan_FilterType_none,     0x325, DO_NOT_CARE_ID2_VALUE,   IfxCan_RxBufferId_2 },
+        //    { 7, IfxCan_FilterElementConfiguration_storeInRxBuffer, IfxCan_FilterType_none,     0x326, DO_NOT_CARE_ID2_VALUE,   IfxCan_RxBufferId_5 }
 };
 
 /* ====================================================================================================================
@@ -95,11 +95,11 @@ IfxCan_Filter g_filterStandardIdConfiguration[] =
  * ====================================================================================================================
  */
 IfxCan_Filter g_filterExtendedIdConfiguration[] =
-{
-    { 0, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x7654321, 0x7654321,             DO_NOT_CARE_BUFFER_INDEX },
-    { 1, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x19999999, 0x19999999,           DO_NOT_CARE_BUFFER_INDEX },
-    { 2, IfxCan_FilterElementConfiguration_storeInRxFifo0,  IfxCan_FilterType_dualId,   0x2222222, 0x2222222,             DO_NOT_CARE_BUFFER_INDEX },
-//    { 3, IfxCan_FilterElementConfiguration_storeInRxFifo1,  IfxCan_FilterType_none,     0x16666666, 0x16666666,             DO_NOT_CARE_BUFFER_INDEX }
+    {
+        {0, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x7654321, 0x7654321, DO_NOT_CARE_BUFFER_INDEX},
+        {1, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x19999999, 0x19999999, DO_NOT_CARE_BUFFER_INDEX},
+        {2, IfxCan_FilterElementConfiguration_storeInRxFifo0, IfxCan_FilterType_dualId, 0x2222222, 0x2222222, DO_NOT_CARE_BUFFER_INDEX},
+        //    { 3, IfxCan_FilterElementConfiguration_storeInRxFifo1,  IfxCan_FilterType_none,     0x16666666, 0x16666666,             DO_NOT_CARE_BUFFER_INDEX }
 };
 
 /*********************************************************************************************************************/
@@ -131,7 +131,7 @@ void canIsrRxHandler(void)
     g_mcmcan.rxMsg.readFromRxFifo0 = TRUE;
 
     /* Read the received CAN message */
-    IfxCan_Can_readMessage(&g_mcmcan.can0Node0, &g_mcmcan.rxMsg, (uint32*)&g_mcmcan.rxData[0]);
+    IfxCan_Can_readMessage(&g_mcmcan.can0Node0, &g_mcmcan.rxMsg, (uint32 *)&g_mcmcan.rxData[0]);
 
     /* Debug only */
     g_NeedPrint_CanNewMseg = TRUE;
@@ -158,14 +158,14 @@ void initMcmcan(void)
      */
     IfxCan_Can_initNodeConfig(&g_mcmcan.canNodeConfig, &g_mcmcan.canModule);
 
-    g_mcmcan.canNodeConfig.nodeId = IfxCan_NodeId_0;   
+    g_mcmcan.canNodeConfig.nodeId = IfxCan_NodeId_0;
 
     g_mcmcan.canNodeConfig.clockSource = IfxCan_ClockSource_both;
 
     g_mcmcan.canNodeConfig.frame.type = IfxCan_FrameType_transmitAndReceive;
     g_mcmcan.canNodeConfig.frame.mode = IfxCan_FrameMode_fdLongAndFast;
 
-    g_mcmcan.canNodeConfig.baudRate.baudrate = 500000;   //500KBaud
+    g_mcmcan.canNodeConfig.baudRate.baudrate = 500000; // 500KBaud
 
     g_mcmcan.canNodeConfig.txConfig.txMode = IfxCan_TxMode_dedicatedBuffers;
     g_mcmcan.canNodeConfig.txConfig.dedicatedTxBuffersNumber = 255;
@@ -181,17 +181,16 @@ void initMcmcan(void)
     g_mcmcan.canNodeConfig.filterConfig.standardFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_reject;
     g_mcmcan.canNodeConfig.filterConfig.extendedFilterForNonMatchingFrames = IfxCan_NonMatchingFrame_reject;
 
-    //transmit interrupt
+    // transmit interrupt
     g_mcmcan.canNodeConfig.interruptConfig.rxFifo0NewMessageEnabled = TRUE;
     g_mcmcan.canNodeConfig.interruptConfig.rxf0n.priority = ISR_PRIORITY_CAN_RX;
     g_mcmcan.canNodeConfig.interruptConfig.rxf0n.interruptLine = IfxCan_InterruptLine_1;
     g_mcmcan.canNodeConfig.interruptConfig.rxf0n.typeOfService = IfxSrc_Tos_cpu0;
 
     IFX_CONST IfxCan_Can_Pins can0Node0_pins = {
-        &IfxCan_TXD00_P20_8_OUT,   IfxPort_OutputMode_pushPull, // CAN0_NODE0_TX
-        &IfxCan_RXD00B_P20_7_IN,   IfxPort_InputMode_pullUp,    // CAN0_NODE0_RX
-        IfxPort_PadDriver_cmosAutomotiveSpeed4
-    };
+        &IfxCan_TXD00_P20_8_OUT, IfxPort_OutputMode_pushPull, // CAN0_NODE0_TX
+        &IfxCan_RXD00B_P20_7_IN, IfxPort_InputMode_pullUp,    // CAN0_NODE0_RX
+        IfxPort_PadDriver_cmosAutomotiveSpeed4};
     g_mcmcan.canNodeConfig.pins = &can0Node0_pins;
 
     IfxCan_Can_initNode(&g_mcmcan.can0Node0, &g_mcmcan.canNodeConfig);
@@ -200,11 +199,11 @@ void initMcmcan(void)
      * Initialization of standard and extended ID filter elements
      * ==========================================================================================
      */
-    for(currentFilterElement = 0; currentFilterElement < sizeof(g_filterStandardIdConfiguration)/sizeof(g_filterStandardIdConfiguration[0]); currentFilterElement++)
+    for (currentFilterElement = 0; currentFilterElement < sizeof(g_filterStandardIdConfiguration) / sizeof(g_filterStandardIdConfiguration[0]); currentFilterElement++)
     {
         IfxCan_Can_setStandardFilter(&g_mcmcan.can0Node0, &g_filterStandardIdConfiguration[currentFilterElement]);
     }
-    for(currentFilterElement = 0; currentFilterElement < sizeof(g_filterExtendedIdConfiguration)/sizeof(g_filterExtendedIdConfiguration[0]); currentFilterElement++)
+    for (currentFilterElement = 0; currentFilterElement < sizeof(g_filterExtendedIdConfiguration) / sizeof(g_filterExtendedIdConfiguration[0]); currentFilterElement++)
     {
         IfxCan_Can_setExtendedFilter(&g_mcmcan.can0Node0, &g_filterExtendedIdConfiguration[currentFilterElement]);
     }
@@ -218,30 +217,30 @@ void transmitCanMessage(void)
     IfxCan_Can_initMessage(&g_mcmcan.txMsg);
     g_mcmcan.txMsg.messageId = CAN_MESSAGE_TX_ID0;
     g_mcmcan.txMsg.bufferNumber = 0;
-    g_mcmcan.txMsg.dataLengthCode = IfxCan_DataLengthCode_8;//8 bytes
-    g_mcmcan.txMsg.frameMode = IfxCan_FrameMode_standard;   //Classic CAN
-    g_mcmcan.txMsg.messageIdLength=IfxCan_MessageIdLength_extended;  //Extended Frame
+    g_mcmcan.txMsg.dataLengthCode = IfxCan_DataLengthCode_8;          // 8 bytes
+    g_mcmcan.txMsg.frameMode = IfxCan_FrameMode_standard;             // Classic CAN
+    g_mcmcan.txMsg.messageIdLength = IfxCan_MessageIdLength_extended; // Extended Frame
 
     for (uint8 i = 0; i < IfxCan_DataLengthCode_8; i++)
     {
-        g_mcmcan.txData[i] = g_TxTransTestData[i];                      /* Init TX Buffer                    */
+        g_mcmcan.txData[i] = g_TxTransTestData[i]; /* Init TX Buffer                    */
     }
 
     /* Send the CAN message with the previously defined TX message configuration and content */
-    while( IfxCan_Status_notSentBusy ==
-           IfxCan_Can_sendMessage(&g_mcmcan.can0Node0, &g_mcmcan.txMsg, (uint32*)&g_mcmcan.txData[0]) )
+    while (IfxCan_Status_notSentBusy ==
+           IfxCan_Can_sendMessage(&g_mcmcan.can0Node0, &g_mcmcan.txMsg, (uint32 *)&g_mcmcan.txData[0]))
     {
     }
 }
 
 /************************************************
-*  Init Pins connected to CAN transceiver TJA1043T
-*
-*  @param[in] void
-*  @param[out] void
-*
-*  @retval void
-************************************************/
+ *  Init Pins connected to CAN transceiver TJA1043T
+ *
+ *  @param[in] void
+ *  @param[out] void
+ *
+ *  @retval void
+ ************************************************/
 void InitCanEnPin(void)
 {
     /* Init CAN_EN pin on CAN transceiver, active high */
@@ -251,22 +250,21 @@ void InitCanEnPin(void)
 
     IfxPort_setPinState(CAN_EN_PIN, IfxPort_State_high);
     IfxPort_setPinState(CAN_STB_PIN, IfxPort_State_high);
-
 }
 
 /* Debug only */
 /************************************************
-*  Check global update flag and print Rx value
-*
-*  @param[in] void
-*  @param[out] void
-*
-*  @retval void
-************************************************/
+ *  Check global update flag and print Rx value
+ *
+ *  @param[in] void
+ *  @param[out] void
+ *
+ *  @retval void
+ ************************************************/
 void CanRx_CheckAndPrint(void)
 {
-    char UartTxOutput[1024];                         /* Debug string buffer for UART */
-    Ifx_SizeT BufferLen;                            /* Debug string buffer length for UART */
+    char UartTxOutput[1024]; /* Debug string buffer for UART */
+    Ifx_SizeT BufferLen;     /* Debug string buffer length for UART */
     char temp[16] = {'\0'};
 
     if (g_NeedPrint_CanNewMseg)
@@ -274,28 +272,28 @@ void CanRx_CheckAndPrint(void)
 
         g_NeedPrint_CanNewMseg = FALSE;
         strcpy(UartTxOutput, "Can Rx: MessageId = { ");
-        sprintf(temp, "0x%lX };\n\r", g_mcmcan.rxMsg.messageId );
+        sprintf(temp, "0x%lX };\n\r", g_mcmcan.rxMsg.messageId);
         strcat(UartTxOutput, temp);
 
-        while( IfxCan_Status_notSentBusy ==
-           IfxCan_Can_sendMessage(&g_mcmcan.can0Node0, &g_mcmcan.txMsg, (uint32*)&g_mcmcan.rxData[0]) )
+        while (IfxCan_Status_notSentBusy ==
+               IfxCan_Can_sendMessage(&g_mcmcan.can0Node0, &g_mcmcan.txMsg, (uint32 *)&g_mcmcan.rxData[0]))
         {
         }
 
         switch (g_mcmcan.rxMsg.messageIdLength)
         {
-            case IfxCan_MessageIdLength_standard:
-                strcat(UartTxOutput, "Can Rx: MessageIdLength = {standard};\n\r");
-                break;
-            case IfxCan_MessageIdLength_extended:
-                strcat(UartTxOutput, "Can Rx: MessageIdLength = {extended};\n\r");
-                break;
-            case IfxCan_MessageIdLength_both:
-                strcat(UartTxOutput, "Can Rx: MessageIdLength = {both};\n\r");
-                break;
-            default:
-                strcat(UartTxOutput, "Can Rx: MessageIdLength = {unknown};\n\r");
-                break;
+        case IfxCan_MessageIdLength_standard:
+            strcat(UartTxOutput, "Can Rx: MessageIdLength = {standard};\n\r");
+            break;
+        case IfxCan_MessageIdLength_extended:
+            strcat(UartTxOutput, "Can Rx: MessageIdLength = {extended};\n\r");
+            break;
+        case IfxCan_MessageIdLength_both:
+            strcat(UartTxOutput, "Can Rx: MessageIdLength = {both};\n\r");
+            break;
+        default:
+            strcat(UartTxOutput, "Can Rx: MessageIdLength = {unknown};\n\r");
+            break;
         }
 
         strcat(UartTxOutput, "Can Rx: dataLengthCode = { ");
@@ -304,18 +302,18 @@ void CanRx_CheckAndPrint(void)
 
         switch (g_mcmcan.rxMsg.frameMode)
         {
-            case IfxCan_FrameMode_standard:
-                strcat(UartTxOutput, "Can Rx: frameMode = {standard};\n\r");
-                break;
-            case IfxCan_FrameMode_fdLong:
-                strcat(UartTxOutput, "Can Rx: frameMode = {fdLong};\n\r");
-                break;
-            case IfxCan_FrameMode_fdLongAndFast:
-                strcat(UartTxOutput, "Can Rx: frameMode = {fdLongAndFast};\n\r");
-                break;
-            default:
-                strcat(UartTxOutput, "Can Rx: frameMode = {unknown};\n\r");
-                break;
+        case IfxCan_FrameMode_standard:
+            strcat(UartTxOutput, "Can Rx: frameMode = {standard};\n\r");
+            break;
+        case IfxCan_FrameMode_fdLong:
+            strcat(UartTxOutput, "Can Rx: frameMode = {fdLong};\n\r");
+            break;
+        case IfxCan_FrameMode_fdLongAndFast:
+            strcat(UartTxOutput, "Can Rx: frameMode = {fdLongAndFast};\n\r");
+            break;
+        default:
+            strcat(UartTxOutput, "Can Rx: frameMode = {unknown};\n\r");
+            break;
         }
 
         strcat(UartTxOutput, "Can Rx: Data = { ");
@@ -329,19 +327,24 @@ void CanRx_CheckAndPrint(void)
         Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
 
         /* Special command for S0->S5, S5->S0 check */
-        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard \
-        && *((uint64 *)g_mcmcan.rxData) == 0x7766554433221100 \
-        )
+        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard && *((uint64 *)g_mcmcan.rxData) == 0x7766554433221100)
         {
             strcpy(UartTxOutput, "Can Rx: S0 -> S5 Command match, start power trans\n\r\n\r");
             BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
             Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
             PowerTrans_S0_To_S5(SPI1);
         }
-        
-        else if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard \
-        && *((uint64 *)g_mcmcan.rxData) == 0x0011223344 \
-        )
+        // else if (g_mcmcan.rxMsg.messageId == 0x7654321 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_extended \
+        // && *((uint64 *)g_mcmcan.rxData) == 0x8899AABBCCDDEEFF && *((uint64 *)g_mcmcan.rxData+1) == 0x0011223344556677 \
+        // && *((uint64 *)g_mcmcan.rxData+2) == 0x7766554433221100 && *((uint64 *)g_mcmcan.rxData+3) == 0xFFEEDDCCBBAA9988 \
+        // )
+        // {
+        //     strcpy(UartTxOutput, "Can Rx: S5 -> S0 Command match, start power trans\n\r\n\r");
+        //     BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
+        //     Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
+        //     PowerTrans_S5_To_S0();
+        // }
+        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard && *((uint64 *)g_mcmcan.rxData) == 0x0011223344)
         {
             strcpy(UartTxOutput, "Can Rx: S5 -> S0 Command match, start power trans\n\r\n\r");
             BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
@@ -350,9 +353,7 @@ void CanRx_CheckAndPrint(void)
         }
 
         /* Special command for S0->S3, S3->S0 check */
-        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard \
-        && *((uint64 *)g_mcmcan.rxData) == 0xFF0033 \
-        )
+        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard && *((uint64 *)g_mcmcan.rxData) == 0xFF0033)
         {
             strcpy(UartTxOutput, "Can Rx: S0 -> S3 Command match, start power trans\n\r\n\r");
             BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
@@ -360,21 +361,29 @@ void CanRx_CheckAndPrint(void)
             // g_NeedPrint_CanNewMseg = FALSE;
             PowerTrans_S0_To_S3(SPI1);
         }
-        else if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard \
-        && *((uint64 *)g_mcmcan.rxData) == 0xFF3300 \
-        )
+
+        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard && *((uint64 *)g_mcmcan.rxData) == 0xFF3300)
         {
             strcpy(UartTxOutput, "Can Rx: S3 -> S0 Command match, start power trans\n\r\n\r");
             BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
             Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
-            //g_NeedPrint_CanNewMseg = FALSE;
+            // g_NeedPrint_CanNewMseg = FALSE;
             PowerTrans_S3_To_S0();
+        }
+
+        // close the A2B power
+        if (g_mcmcan.rxMsg.messageId == 0x123 && g_mcmcan.rxMsg.messageIdLength == IfxCan_MessageIdLength_standard && *((uint64 *)g_mcmcan.rxData) == 0xBB22AA)
+        {
+            strcpy(UartTxOutput, "A2B has closed!!!\n\r\n\r");
+            BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
+            Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
+
+            IfxPort_setPinState(A2B_PIN, IfxPort_State_low);
         }
 
         // g_NeedPrint_CanNewMseg = FALSE;
     }
 }
-
 
 void switchSleepMode(void)
 {
@@ -383,13 +392,13 @@ void switchSleepMode(void)
     /* Clear EndInit protection */
     IfxScuWdt_clearCpuEndinit(IfxScuWdt_getCpuWatchdogPassword());
 
-    //setQspiStatuSleep();
-    
+    // setQspiStatuSleep();
+
     g_mcmcan.can0Node0.can->CLC.B.EDIS = BLOCK_SLEEP_MODE;
 
-    SCU_PMSWCR1.B.CPUSEL = PMSWCR1_CPUSEL;      /* Set the CPU0 as CPU master to trigger a power down mode      */
+    SCU_PMSWCR1.B.CPUSEL = PMSWCR1_CPUSEL; /* Set the CPU0 as CPU master to trigger a power down mode      */
 
-    SCU_PMCSR0.B.REQSLP = PMCSR0_REQSLP;        /* Request System Sleep Mode CPU0                               */
+    SCU_PMCSR0.B.REQSLP = PMCSR0_REQSLP; /* Request System Sleep Mode CPU0                               */
 
     SCU_PMCSR1.B.REQSLP = PMCSR0_REQSLP;
 
@@ -402,4 +411,3 @@ void switchSleepMode(void)
     /* Set EndInit protection */
     IfxScuWdt_setCpuEndinit(IfxScuWdt_getCpuWatchdogPassword());
 }
-

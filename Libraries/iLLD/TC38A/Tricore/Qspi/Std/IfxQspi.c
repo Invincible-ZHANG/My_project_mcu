@@ -2,8 +2,8 @@
  * \file IfxQspi.c
  * \brief QSPI  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *
@@ -101,7 +101,7 @@ uint32 IfxQspi_calculateExtendedConfigurationValue(Ifx_QSPI *qspi, const uint8 c
     econ.U = 0;
 
     const int     maxB   = 3;
-    float32       tQspi  = 1.0f / IfxQspi_getTimeQuantaFrequency(qspi);
+    float32       tQspi  = 1.0 / IfxQspi_getTimeQuantaFrequency(qspi);
     float32       fBaud  = (chConfig->baudrate);
     int           abcMin = (2);
     int           abcMax = (4 + 0 + 4);
@@ -111,20 +111,20 @@ uint32 IfxQspi_calculateExtendedConfigurationValue(Ifx_QSPI *qspi, const uint8 c
     float32       tTmp, tBaudTmp;
     boolean       done = FALSE;
 
-    if (fBaud == 0.0f)
+    if (fBaud == 0.0)
     {
         IFX_ASSERT(IFX_VERBOSE_LEVEL_WARNING, FALSE);   /* chosen baud rate is 0 */
-        fBaud = 1.0f;
+        fBaud = 1.0;
     }
 
-    float32 tBaud = 1.0f / fBaud;
+    float32 tBaud = 1.0 / fBaud;
 
     bestError = 1e6;
 
     for (abc = abcMax; abc >= abcMin; abc--)
     {
         tTmp = tQspi * abc;
-        q    = (int)((tBaud / tTmp) + 0.5f);
+        q    = (int)((tBaud / tTmp) + 0.5);
 
         if (q > 64)
         {
@@ -157,7 +157,7 @@ uint32 IfxQspi_calculateExtendedConfigurationValue(Ifx_QSPI *qspi, const uint8 c
             /* break out if ABC is even and error = 0 */
             if (((uint32)bestAbc & (uint32)0x1) == 0)
             {
-                done = (__neqf(error, 0.0f)) ? FALSE : TRUE;
+                done = (__neqf(error, 0.0)) ? FALSE : TRUE;
 
                 if (done != FALSE)
                 {
@@ -237,30 +237,30 @@ uint32 IfxQspi_calculateTimeQuantumLength(Ifx_QSPI *qspi, float maxBaudrate)
 
     IFX_UNUSED_PARAMETER(qspi);
 
-    uint32 abcq  = ABCQMIN, bestTq;
-    float  realTQ, deltaMax, bestDelta, achievedMax, tq;
+    uint32 abcq  = ABCQMIN, tq, bestTq;
+    float  realTQ, deltaMax, bestDelta, achievedMax;
     float  fQspi = IfxScuCcu_getQspiFrequency();
 
-    if (__leqf(maxBaudrate, 0.0f))
+    if (__leqf(maxBaudrate, 0.0))
     {
         IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE); /* Max baud rate is 0!! */
     }
 
-    realTQ    = fQspi / (4.0f * maxBaudrate);
+    realTQ    = fQspi / (4.0 * maxBaudrate);
     bestTq    = __max((uint32)__roundf(realTQ), 1);
     bestDelta = __absf(maxBaudrate - (fQspi / bestTq));
 
     for (abcq = ABCQMIN; abcq <= ABCQMAX; abcq++)
     {
         realTQ      = fQspi / (maxBaudrate * abcq);
-        tq          = (float)(realTQ + 0.5f);
+        tq          = (uint32)(realTQ + 0.5);
         achievedMax = fQspi / (tq * abcq);
         deltaMax    = __absf(maxBaudrate - achievedMax);
 
         if (__leqf(deltaMax, bestDelta) && (tq >= 1))
         {
             bestDelta = deltaMax;
-            bestTq    = (uint32)tq;
+            bestTq    = tq;
         }
 
         if ((bestDelta == 0) || (tq < 1))
@@ -477,13 +477,13 @@ void IfxQspi_calculateDelayConstants(const Ifx_QSPI *qspi, const IfxQspi_Channel
 
         for (preTemp = 0; preTemp < 8; preTemp++)
         {
-            delayTemp = (uint8)((scaleTemp / (1 << (2 * preTemp))) + 0.5f); /* divide the scale_temp by ( 4 ^ pre_temp) to find delay_temp */
+            delayTemp = (uint8)((scaleTemp / (1 << (2 * preTemp))) + 0.5); /* divide the scale_temp by ( 4 ^ pre_temp) to find delay_temp */
 
-            if (delayTemp <= 8)                                             /* if delay_temp is <= 8; we can get a good value pair */
+            if (delayTemp <= 8)                                            /* if delay_temp is <= 8; we can get a good value pair */
             {
-                if ((float32)(delayTemp << (2 * preTemp)) >= scaleTemp)     /* greater delays are tolerated. less is not */
+                if ((float32)(delayTemp << (2 * preTemp)) >= scaleTemp)    /* greater delays are tolerated. less is not */
                 {
-                    delayFinal = __max(delayTemp - 1, 0);                   /* subtract 1 to set to register */
+                    delayFinal = __max(delayTemp - 1, 0);                  /* subtract 1 to set to register */
                     preFinal   = preTemp;
                     matchFound = TRUE;
                     break;

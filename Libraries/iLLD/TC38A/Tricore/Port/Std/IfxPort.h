@@ -3,9 +3,8 @@
  * \brief PORT  basic functionality
  * \ingroup IfxLld_Port
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  *
  *
@@ -467,7 +465,6 @@ IFX_EXTERN void IfxPort_setPinPadDriver(Ifx_P *port, uint8 pinIndex, IfxPort_Pad
 /** \brief Enable the Pin Controller Selection.
  * \param port Pointer to the port which should be accessed.
  * \param pinIndex Specifies the pin for which the mode has to be set.
- * Note:It is the Users responsibility to pass correct port, pin and mode inputs
  * \return None
  */
 IFX_EXTERN void IfxPort_setPinControllerSelection(Ifx_P *port, uint8 pinIndex);
@@ -475,7 +472,6 @@ IFX_EXTERN void IfxPort_setPinControllerSelection(Ifx_P *port, uint8 pinIndex);
 /** \brief Disable the Pin Controller Selection.
  * \param port Pointer to the port which should be accessed.
  * \param pinIndex Specifies the pin for which the mode has to be cleared.
- * Note:It is the Users responsibility to pass correct port, pin and mode inputs
  * \return None
  */
 IFX_EXTERN void IfxPort_resetPinControllerSelection(Ifx_P *port, uint8 pinIndex);
@@ -616,13 +612,12 @@ IFX_EXTERN void IfxPort_resetESR(Ifx_P *port, uint8 pinIndex);
  */
 IFX_EXTERN void IfxPort_setESR(Ifx_P *port, uint8 pinIndex);
 
-/** \brief
+/**
  * \param port Pointer to the port which should be accessed.
  * \param pinIndex Specifies the pin for which the mode has to be set.
  * \param mode Selects the controller for the port pin(Tricore,EVADC,GETH,SCR etc)
  * 0-> normal function
  * 1-> Alternate functionality(SCR pin,EVADC PDD,GETH RGMII/MII etc)
- * Note:It is the Users responsibility to pass correct port, pin and mode inputs
  * \return None
  */
 IFX_EXTERN void IfxPort_modifyPinControllerSelection(Ifx_P *port, uint8 pinIndex, boolean mode);

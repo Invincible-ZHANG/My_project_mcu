@@ -72,23 +72,23 @@
 /******************************************************************************/
 
 #if defined(__TASKING__)
- #if defined(__CTC__) || defined(__CPTC__)
+ #if defined(__CTC__)
  #define Ifx_Strict_16Bit unsigned __sfrbit16
  #define Ifx_Strict_32Bit unsigned __sfrbit32
  #else
  #define Ifx_Strict_16Bit volatile unsigned short
  #define Ifx_Strict_32Bit volatile unsigned int
  #endif
-#elif defined(__HIGHTEC__)
+#endif
+#if defined(__HIGHTEC__)
 #define Ifx_Strict_16Bit volatile unsigned short
 #define Ifx_Strict_32Bit volatile unsigned int
-#elif defined(__GNUC__) && !defined(__HIGHTEC__)
-#define Ifx_Strict_16Bit volatile unsigned short
-#define Ifx_Strict_32Bit volatile unsigned int
-#elif defined(__DCC__)
+#endif
+#if defined(__DCC__)
 #define Ifx_Strict_16Bit unsigned short
 #define Ifx_Strict_32Bit unsigned int
-#elif defined(__ghs__)
+#endif
+#if defined(__ghs__)
 #define Ifx_Strict_16Bit volatile unsigned short
 #define Ifx_Strict_32Bit volatile unsigned int
 #endif

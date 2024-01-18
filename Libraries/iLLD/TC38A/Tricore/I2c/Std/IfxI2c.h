@@ -3,9 +3,8 @@
  * \brief I2C  basic functionality
  * \ingroup IfxLld_I2c
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  * \defgroup IfxLld_I2c_Std_enums Enumerations
  * \ingroup IfxLld_I2c_Std

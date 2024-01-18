@@ -3,9 +3,8 @@
  * \brief ERAY ERAY details
  * \ingroup IfxLld_Eray
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  * \defgroup IfxLld_Eray_Eray_Usage How to use the ERAY Interface driver?
  * \ingroup IfxLld_Eray
@@ -678,7 +676,7 @@ typedef struct
     uint8                  collisionAvoidanceDuration;       /**< \brief accepted duration of collision avoidance symbol. */
     IfxEray_StrobePosition strobePosition;                   /**< \brief sample count value for strobing. */
     IfxEray_Baudrate       baudrate;                         /**< \brief baud rate on the flexray bus. */
-    uint16                 receiveWakeupTestDuration;        /**< \brief duration of received wakeup pattern in bit times. */
+    uint8                  receiveWakeupTestDuration;        /**< \brief duration of received wakeup pattern in bit times. */
     uint8                  transmitWakeupRepetitions;        /**< \brief duration of transmitted wakeup pattern in bit times. */
     uint16                 transmissionStartTime;            /**< \brief duration of transmission start time. */
 } IfxEray_Eray_Prtc1Control;
@@ -736,7 +734,7 @@ typedef struct
 {
     uint32                    networkVectorLength;           /**< \brief length of network management vector. */
     uint8                     staticFramepayload;            /**< \brief payload length of static frame in double bytes. */
-    uint16                    latestTransmissionStart;       /**< \brief number of dynamic slots before inhibit frame transmission in dynamic segment. */
+    uint8                     latestTransmissionStart;       /**< \brief number of dynamic slots before inhibit frame transmission in dynamic segment. */
     IfxEray_Eray_GTUConfig    gtuConfig;                     /**< \brief gloabl timing unit configuration structure. */
     IfxEray_Eray_Succ1Config  succ1Config;                   /**< \brief communication controller control properties. */
     IfxEray_Eray_Succ2Config  succ2Config;                   /**< \brief communication listen timeout properties. */

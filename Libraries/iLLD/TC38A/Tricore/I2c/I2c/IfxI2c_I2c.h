@@ -3,9 +3,8 @@
  * \brief I2C I2C details
  * \ingroup IfxLld_I2c
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  * \defgroup IfxLld_I2c_I2c_Usage How to use the I2c driver?
  * \ingroup IfxLld_I2c
@@ -109,7 +107,7 @@
  *
  *     // set device specifig values.
  *     i2cDeviceConfig.deviceAddress = 0xa0;  // 8 bit device address
- *     i2cDeviceConfig.enableRepeatedStart = TRUE; //  TRUE: Repeated start mode is enabled. FALSE: Default (Stop is generated at the end of read/write)
+ *
  *     // initialize the i2c device handle
  *     IfxI2c_I2c_initDevice(&i2cDev, &i2cDeviceConfig);
  * \endcode
@@ -309,22 +307,20 @@ typedef struct
  */
 typedef struct
 {
-    IfxI2c_I2c        *i2c;                       /**< \brief Module Pionter */
-    uint16             deviceAddress;             /**< \brief the slave device's address */
-    IfxI2c_AddressMode addressMode;               /**< \brief slave device's address (7 or 10 bits) */
-    IfxI2c_Mode        speedMode;                 /**< \brief slave device in Standard/Fast or High Speed mode. */
-    boolean            enableRepeatedStart;       /**< \brief TRUE: Stop is not generated FALSE: Default (Stop is generated at the end of read/write) */
+    IfxI2c_I2c        *i2c;                 /**< \brief Module Pionter */
+    uint16             deviceAddress;       /**< \brief the slave device's address */
+    IfxI2c_AddressMode addressMode;         /**< \brief slave device's address (7 or 10 bits) */
+    IfxI2c_Mode        speedMode;           /**< \brief slave device in Standard/Fast or High Speed mode. */
 } IfxI2c_I2c_Device;
 
 /** \brief Structure to configure the device's data structure
  */
 typedef struct
 {
-    IfxI2c_I2c        *i2c;                       /**< \brief Module Pointer */
-    uint16             deviceAddress;             /**< \brief the slave device's address */
-    IfxI2c_AddressMode addressMode;               /**< \brief slave device's address (7 or 10 bits) */
-    IfxI2c_Mode        speedMode;                 /**< \brief slave device in Standard/Fast or High Speed mode. */
-    boolean            enableRepeatedStart;       /**< \brief TRUE: Stop is not generated FALSE: Default (Stop is generated at the end of read/write) */
+    IfxI2c_I2c        *i2c;                 /**< \brief Module Pointer */
+    uint16             deviceAddress;       /**< \brief the slave device's address */
+    IfxI2c_AddressMode addressMode;         /**< \brief slave device's address (7 or 10 bits) */
+    IfxI2c_Mode        speedMode;           /**< \brief slave device in Standard/Fast or High Speed mode. */
 } IfxI2c_I2c_deviceConfig;
 
 /** \} */

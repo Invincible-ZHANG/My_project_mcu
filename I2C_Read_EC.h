@@ -4,11 +4,10 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
-/* I2C HW configuration to control EC */
+/* EC I2C HW config */
 #define EC_SCL_PIN                  IfxI2c0_SCL_P13_1_INOUT     /* SCL PIN                                           */
 #define EC_SDA_PIN                  IfxI2c0_SDA_P13_2_INOUT     /* SDA PIN       */
 #define EC_PWRBTN_PIN               &MODULE_P20,0
-#define EC_PD0_GP1_PIN               &MODULE_P20,3
                                      
 #define I2C_BAUDRATE                100000                      /* 100 kHz baud rate                                 */
 #define EC_I2C_ADDRESS              0x68                        /* 7 bit slave device address of EC is 0x68.         */
@@ -49,9 +48,7 @@
 #define CMD_SWITCH_SOC_S0_TO_S5     0x84                        /* Write, switch SOC system power state from S0 to S5               */
 #define CMD_SWITCH_SOC_S5_TO_G3     0x85                        /* Write, switch SOC system power state from S5 to G3               */
 
-/* Macros for EC RAM 0x03, SOC system mode R/W define :
- * bit[7] = 1 means EC is busy;
- */
+/* Macros for EC RAM 0x02, SOC system mode */
 #define NORMAL_MODE                 0x00
 #define SILENT_MODE                 0x01
 

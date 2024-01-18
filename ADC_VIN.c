@@ -1,10 +1,8 @@
 /*
  * ADC_VIN.c
  *
- *  optimization on: 2023.12.19
- *      Author: Zijian Zhang
- *  
- *  !!!Unauthorized use prohibited.
+ *  Created on: 2023年10月26日
+ *      Author: zijianz1
  */
 
 /*********************************************************************************************************************/
@@ -243,7 +241,9 @@ void setEfuseState(bool state) {
  */
 void logEfuseAction(const char* action) {
     char logBuffer[128];
-    Ifx_SizeT bufferLen = snprintf(logBuffer, sizeof(logBuffer), "Efuse Action: %s\n\r", action);
+    Ifx_SizeT bufferLen;
+    bufferLen = (Ifx_SizeT)strlen(logBuffer);
+//    Ifx_SizeT bufferLen = snprintf(logBuffer, strlen(logBuffer), "Efuse Action: %s\n\r", action);
     Send_ASCLIN_UART_Message(logBuffer, bufferLen); // Send log information via UART
 }
 

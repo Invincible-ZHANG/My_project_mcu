@@ -3,9 +3,8 @@
  * \brief EVADC ADC details
  * \ingroup IfxLld_Evadc
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  * \defgroup IfxLld_Evadc_Adc_Usage How to use the EVADC ADC Interface driver?
  * \ingroup IfxLld_Evadc
@@ -377,8 +375,6 @@ typedef struct
     IfxEvadc_AnalogClockGenerationMode analogClockGenerationMode;
     IfxEvadc_SupplyVoltageLevelControl supplyVoltage;
     IfxEvadc_StartupCalibration        startupCalibrationControl;
-    uint16                             boundary0;                                                /**< \brief oundary Value 0 for limit checking. (12 Bits) */
-    uint16                             boundary1;                                                /**< \brief Boundary Value 1 for limit checking. (12 Bits) */
 } IfxEvadc_Adc_Config;
 
 /** \brief Emux Control Structure
@@ -421,8 +417,6 @@ typedef struct
     boolean                                  inputBufferEnabled;
     IfxEvadc_IdlePrecharge                   idlePrechargeLevel;                          /**< \brief Voltage level to which sampling capacitor will be precharged when idle. */
     IfxEvadc_AnalogConverterMode             analogConverterMode;
-    uint16                                   boundary0;                                   /**< \brief Boundary Value 0 for limit checking. (12 Bits) */
-    uint16                                   boundary1;                                   /**< \brief Boundary Value 1 for limit checking. (12 Bits) */
 } IfxEvadc_Adc_GroupConfig;
 
 /** \} */

@@ -3,9 +3,8 @@
  * \brief GTM  basic functionality
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -41,7 +40,6 @@
  *
  *
  *
- *
  * \defgroup IfxLld_Gtm_Std_Atom Atom Basic Functionality
  * \ingroup IfxLld_Gtm_Std
  * \defgroup IfxLld_Gtm_Std_Atom_Enumerations ATOM Enumerations
@@ -67,19 +65,6 @@
 #include "Src/Std/IfxSrc.h"
 #include "IfxGtm_Cmu.h"
 #include "stddef.h"
-
-/******************************************************************************/
-/*-----------------------------------Macros-----------------------------------*/
-/******************************************************************************/
-
-/** \brief Macro to calculate shift for each channel
- * Each channel occupies two bits hence left shift by 1 and then add offset
- */
-#define IFXGTM_ATOM_AGC_CHANNEL_SHIFT(channel, offset) ((((uint32)((uint32)channel & 0x7u)) << 1u) + offset)
-
-/** \brief Macro to mask one channel bitfield in AGC registers
- */
-#define IFXGTM_ATOM_AGC_CHANNEL_MASK (3u)
 
 /******************************************************************************/
 /*--------------------------------Enumerations--------------------------------*/
@@ -174,14 +159,14 @@ IFX_INLINE void IfxGtm_Atom_Ch_setCompareShadow(Ifx_GTM_ATOM *atom, IfxGtm_Atom_
 /*-------------------------Global Function Prototypes-------------------------*/
 /******************************************************************************/
 
-/** \brief Clears IR notification for CCU1 events
+/** \brief Clears the channel One notification
  * \param atom Pointer to the ATOM object
  * \param channel Channel index
  * \return None
  */
 IFX_EXTERN void IfxGtm_Atom_Ch_clearOneNotification(Ifx_GTM_ATOM *atom, IfxGtm_Atom_Ch channel);
 
-/** \brief Clears IR notification for CCU0 events
+/** \brief Clears the channel Zero notification
  * \param atom Pointer to the ATOM object
  * \param channel Channel index
  * \return None

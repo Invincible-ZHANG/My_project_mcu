@@ -2,9 +2,8 @@
  * \file IfxScuWdt.c
  * \brief SCU  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2018 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  *
  */
@@ -563,7 +561,7 @@ void IfxScuWdt_initSafetyWatchdog(Ifx_SCU_WDTS *wdt, const IfxScuWdt_Config *con
     wdt_con1.B.PAR    = config->enableAutomaticPasswordChange ? 1 : 0;
     wdt_con1.B.TCR    = config->enableTimerCheck ? 1 : 0;
     wdt_con1.B.TCTR   = config->enableTimerCheckTolerance ? 1 : 0;
-    wdt_con1.B.CLRIRF = config->clrInternalResetFlag ? 1 : 0;
+    wdt_con1.B.CLRIRF = config->clrInternalResetFlag ? 0 : 1;
 
     /* Finally write CON1 with user defined configuration */
     wdt->CON1.U = wdt_con1.U;

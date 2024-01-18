@@ -2,9 +2,8 @@
  * \file IfxGtm.c
  * \brief GTM  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2018 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  */
 
@@ -86,7 +84,7 @@ float32 IfxGtm_getClusterFrequency(Ifx_GTM *gtm, IfxGtm_Cluster cluster)
 
     if (clsDiv == 0)
     {
-        Freq = 0.0f; /* cluster is disabled - return 0 */
+        Freq = 0.0; /* cluster is disabled - return 0 */
     }
     else
     {

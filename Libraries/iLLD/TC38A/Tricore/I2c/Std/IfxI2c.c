@@ -2,9 +2,8 @@
  * \file IfxI2c.c
  * \brief I2C  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  */
 
@@ -298,12 +296,12 @@ void IfxI2c_setBaudrate(Ifx_I2C *i2c, float32 baudrate)
         i2c->FDIVCFG.B.DEC     = 0x1D2;
 
         i2c->FDIVHIGHCFG.B.INC = 46;
-        i2c->FDIVHIGHCFG.B.DEC = (uint16)(dec + 0.5f);
+        i2c->FDIVHIGHCFG.B.DEC = (uint16)(dec + 0.5);
     }
     else
     {
         i2c->FDIVCFG.B.INC = 1;
-        i2c->FDIVCFG.B.DEC = (uint16)(dec + 0.5f);
+        i2c->FDIVCFG.B.DEC = (uint16)(dec + 0.5);
     }
 
     i2c->TIMCFG.B.SDA_DEL_HD_DAT = 0x3F;

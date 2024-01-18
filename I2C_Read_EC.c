@@ -7,10 +7,10 @@
 #include "ASCLIN_UART.h"
 #include "IfxPort.h"
 #include "Bsp.h"
-
 #include <string.h>
 #include <stdio.h>
 
+// #define EC_PD1_GP2 &MODULE_P33, 9
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
@@ -55,9 +55,9 @@ void init_I2C_module(void)
 /********************************************************************
 *  Read EC RAM data from its specific offset.
 *
-*  @param[in]  RegOff, EC ram data offset
+*  @param[in] RegOff, EC ram data offset
 *  @param[out] *RegRxBuffer, pointer to the data read buffer
-*  @param[in]  RegLength, data length
+*  @param[in] RegLength, data length
 *
 *  @retval void
 ********************************************************************/
@@ -68,10 +68,8 @@ void Read_EC_RAM_Data(uint8 RegOff, uint8 *RegRxBuffer, uint8 RegLength)
      * is ready and confirms the reception via the acknowledge bit (IfxI2c_I2c_Status_nak = not acknowledge).
      * This procedure is done for both the write and read process.
      */
-    /* Read data from EC
-     * Write EC ram data to I2C device ,and Check whether the reg offset on the slave side matches the host side.
-     * If the match is successful, than read the data and save in RegRxbuffer .
-     */
+    /* Read data from EC */
+    // while(IfxPort_getPinState(EC_PD1_GP2) == TRUE);
     while(IfxI2c_I2c_write(&g_i2cDevEC, &RegOff, 1) == IfxI2c_I2c_Status_nak);
     while(IfxI2c_I2c_read(&g_i2cDevEC, RegRxBuffer, RegLength) == IfxI2c_I2c_Status_nak);
 }
@@ -80,9 +78,9 @@ void Read_EC_RAM_Data(uint8 RegOff, uint8 *RegRxBuffer, uint8 RegLength)
 /********************************************************************
 *  Write data to EC RAM specific offset.
 *
-*  @param[in]  RegOff, EC ram data offset
+*  @param[in] RegOff, EC ram data offset
 *  @param[out] *DataBuffer, pointer to the data write buffer
-*  @param[in]  RegLength, data length
+*  @param[in] RegLength, data length
 *
 *  @retval void
 ********************************************************************/
@@ -104,7 +102,7 @@ void Write_Data_To_EC_RAM(uint8 RegOff, uint8 *DataBuffer, uint8 RegLength)
      * is ready and confirms the reception via the acknowledge bit (IfxI2c_I2c_Status_nak = not acknowledge).
      * This procedure is done for both the write and read process.
      */
-    /* Write data to EC */
+    /* Write data from EC */
     while(IfxI2c_I2c_write(&g_i2cDevEC, &I2cTxBuffer[0], I2cTxBufferLength) == IfxI2c_I2c_Status_nak);
 }
 
@@ -124,6 +122,18 @@ void EC_Ram_Operation()
     /* Initialize the time variable */
     TicksFor1s = IfxStm_getTicksFromMilliseconds(BSP_DEFAULT_TIMER, 1000);
 
+    // /*Debug Only start*/
+    // IfxPort_setPinMode(&MODULE_P13, 1, IfxPort_Mode_outputPushPullGeneral);
+    // IfxPort_setPinMode(&MODULE_P13, 2, IfxPort_Mode_outputOpenDrainGeneral);
+    // IfxPort_setPinState(&MODULE_P13, 1, IfxPort_State_low);
+    // IfxPort_setPinState(&MODULE_P13, 2, IfxPort_State_low);
+    
+    // Ifx_TickTime TicksFor200ms;
+    // TicksFor200ms = IfxStm_getTicksFromMilliseconds(BSP_DEFAULT_TIMER, 200);
+    // wait(TicksFor200ms);
+
+    // init_I2C_module();
+
     /*Debug Only end*/
 
     uint8 RegRxBuffer_CHIPID[LENGTH_OF_CHIPID] = {0};
@@ -141,7 +151,6 @@ void EC_Ram_Operation()
     /* Read EC RAM offset 0x02 - Heart Beat */
     Read_EC_RAM_Data(RAMOFFS_OF_HEARTBEAT, &RegRxBuffer_HEARTBEAT[0], LENGTH_OF_HEARTBEAT);
     wait(TicksFor1s);
-    /* Read EC RAM offset 0x02 - Heart Beat, Avoid System is died */
     Read_EC_RAM_Data(RAMOFFS_OF_HEARTBEAT, &RegRxBuffer_HEARTBEAT_Wait1s[0], LENGTH_OF_HEARTBEAT);
     /* Read EC RAM offset 0x03 - System Mode */
     Read_EC_RAM_Data(RAMOFFS_OF_SYSTEMMODE, &RegRxBuffer_SYSTEMMODE[0], LENGTH_OF_SYSTEMMODE);
@@ -205,8 +214,83 @@ void EC_Ram_Operation()
     Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
     /* Debug printf info only -- END */
 
+    while (0)
+    {
+        /* Test different interval from 3s to 30s*/
+        for (WaitTime = 3; WaitTime < 31; WaitTime++)
+        {
+            do
+            {
+                Read_EC_RAM_Data(RAMOFFS_OF_PWR_STATUS, &RegRxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
+            } while ((RegRxBuffer_PWR_STATUS[0] !=  SOC_S0) && (RegRxBuffer_PWR_STATUS[0] !=  SOC_S3));
+
+            switch (RegRxBuffer_PWR_STATUS[0])
+            {
+                case SOC_S0:
+                    wait(TicksFor1s*30);        /* Wait 30s for system S0 to be ready for S3 trans */
+                    RegTxBuffer_PWR_STATUS[0] = CMD_SWITCH_SOC_S0_TO_S3;        /* Send command to Sleep to S3 */
+                    Write_Data_To_EC_RAM(RAMOFFS_OF_PWR_STATUS, &RegTxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
+                    break;
+                case SOC_S3:
+                    wait(TicksFor1s*WaitTime);
+                    RegTxBuffer_PWR_STATUS[0] = CMD_SWITCH_SOC_S3_TO_S0;        /* Send command to wake from S0 */
+                    Write_Data_To_EC_RAM(RAMOFFS_OF_PWR_STATUS, &RegTxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
+// /************************************************
+// *  Execute command to transfer SOC system power 
+// *  state from S0 to S5
+// *
+// *  @param[in] void
+// *  @param[out] void
+// *
+// *  @retval void
+// ************************************************/
+// void PowerTrans_S0_To_S5()
+// {
+//     uint8 RegRxBuffer_PWR_STATUS[LENGTH_OF_PWR_STATUS] = {0};
+//     uint8 RegTxBuffer_PWR_STATUS[LENGTH_OF_PWR_STATUS] = {0x0};
+//     char UartTxOutput[128];                         /* Debug string buffer for UART */
+//     Ifx_SizeT BufferLen;                            /* Debug string buffer length for UART */
+
+//     /* First check if system is in S0 */
+//     /* Read EC RAM offset 0x01 - Power Status */
+//     Read_EC_RAM_Data(RAMOFFS_OF_PWR_STATUS, &RegRxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
+//     switch (RegRxBuffer_PWR_STATUS[0])
+//     {
+//         case SOC_S0:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S0 }, Will shutdown system right now!\n\r\n\r");
+//             RegTxBuffer_PWR_STATUS[0] = CMD_SWITCH_SOC_S0_TO_S5;            /* Send command to shutdown */
+//             Write_Data_To_EC_RAM(RAMOFFS_OF_PWR_STATUS, &RegTxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
+//             break;
+//         case SOC_S1:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S1 }, Will do nothing!\n\r\n\r");
+//             break;
+//         case SOC_S3:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S3 }, Will do nothing!\n\r\n\r");
+//             break;
+//         case SOC_S4:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S4 }, Will do nothing!\n\r\n\r");
+//             break;
+//         case SOC_S5:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S3 }, Will do nothing!\n\r\n\r");
+//             break;
+//         case SOC_G3:
+//             strcpy(UartTxOutput, "EC RAM Read System Power Status = { G3 }, Will do nothing!\n\r\n\r");
+//             break;
+//         default:
+//             strcpy(UartTxOutput, "System power status unknown, will do nothing!\n\r\n\r");
+//             break;
+//     }
+//     BufferLen = (Ifx_SizeT)strlen(UartTxOutput);
+//     Send_ASCLIN_UART_Message(UartTxOutput, BufferLen);
+// }
 
 /************************************************
 *  Execute command to transfer SOC system power 
@@ -238,8 +322,6 @@ void PowerTrans_S5_To_S0()
             strcpy(UartTxOutput, "EC RAM Read System Power Status = { S5 }, Will power on system right now!\n\r\n\r");
             // RegTxBuffer_PWR_STATUS[0] = CMD_SWITCH_SOC_S5_TO_S0;            /* Send command to power on */
             // Write_Data_To_EC_RAM(RAMOFFS_OF_PWR_STATUS, &RegTxBuffer_PWR_STATUS[0], LENGTH_OF_PWR_STATUS);
-            IfxPort_setPinState(EC_PD0_GP1_PIN, IfxPort_State_high);
-
             IfxPort_setPinState(EC_PWRBTN_PIN, IfxPort_State_low);
             wait(TicksFor10ms * 12);
             IfxPort_setPinState(EC_PWRBTN_PIN, IfxPort_State_high);

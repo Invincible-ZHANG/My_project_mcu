@@ -3,9 +3,8 @@
  * \brief DTS  basic functionality
  * \ingroup IfxLld_Dts
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2017 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -39,7 +38,6 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
- *
  * \defgroup IfxLld_Dts_Std_Control Control functions
  * \ingroup IfxLld_Dts_Std
  * \defgroup IfxLld_Dts_Std_Status Status functions
@@ -58,7 +56,6 @@
 #include "IfxPms_bf.h"
 #include "Cpu/Std/IfxCpu_Intrinsics.h"
 #include "Src/Std/IfxSrc.h"
-
 /** \addtogroup IfxLld_Dts_Std_Status
  * \{ */
 

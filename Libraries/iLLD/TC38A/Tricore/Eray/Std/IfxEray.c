@@ -2,9 +2,8 @@
  * \file IfxEray.c
  * \brief ERAY  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  */
 
@@ -265,9 +263,10 @@ void IfxEray_setMessageBufferInterruptDestination(Ifx_ERAY *eray, uint8 messageB
 
 void IfxEray_setNewDataInterruptDestination(Ifx_ERAY *eray, uint8 ndat, uint8 ndatDestination)
 {
-    uint8           ix      = ndat >> 5;
-    uint32          mask    = 1 << (ndat & 31);
-    Ifx_ERAY_NDIC1 *ndicSFR = (Ifx_ERAY_NDIC1 *)((uint32)&eray->NDIC1 + (ix << 2));
+    IFX_UNUSED_PARAMETER(ndat);
+    uint8           ix      = ndatDestination / 32;
+    uint32          mask    = 1 << (ndatDestination % 32);
+    Ifx_ERAY_NDIC1 *ndicSFR = (Ifx_ERAY_NDIC1 *)((uint32)&eray->NDIC1 + 4 * ix);
 
     if (ndatDestination == FALSE)
     {

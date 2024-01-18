@@ -2,9 +2,8 @@
  * \file IfxGeth_Eth.c
  * \brief GETH ETH details
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2023 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  *
  */
@@ -76,7 +74,6 @@ void IfxGeth_Eth_configureDMA(IfxGeth_Eth *geth, IfxGeth_Eth_DmaConfig *dmaConfi
     for (txChannelIndex = 0; txChannelIndex < dmaConfig->numOfTxChannels; txChannelIndex++)
     {
         IfxGeth_dma_setTxMaxBurstLength(geth->gethSFR, dmaConfig->txChannel[txChannelIndex].channelId, dmaConfig->txChannel[txChannelIndex].maxBurstLength);
-        IfxGeth_dma_setTxOSF(geth->gethSFR, dmaConfig->txChannel[txChannelIndex].channelId, dmaConfig->txChannel[txChannelIndex].enableOSF);
         IfxGeth_Eth_initTransmitDescriptors(geth, &dmaConfig->txChannel[txChannelIndex]);
     }
 
@@ -291,27 +288,11 @@ void IfxGeth_Eth_initModule(IfxGeth_Eth *geth, IfxGeth_Eth_Config *config)
         }
     }
 
-    gethSFR->GPCTL.B.EPR = 0; /*GETH_TC.002*/
-    gethSFR->SKEWCTL.U   = 0; /*GETH_TC.002*/
-
     /* reset the Module */
     IfxGeth_resetModule(gethSFR);
-
-    IfxStm_waitTicks(&MODULE_STM0, 35); /*GETH_TC.002. Wait min 35 fSPB cycles after reset for RGMII*/
-
     /* select the Phy Interface Mode */
     IfxGeth_setPhyInterfaceMode(gethSFR, config->phyInterfaceMode);
-
-    if (config->phyInterfaceMode == IfxGeth_PhyInterfaceMode_rgmii)
-    {
-        /*Skew Control is optional for RGMII and only applicable in RGMII mode*/
-        gethSFR->SKEWCTL.B.TXCFG = config->rgmiiTxSkewControl;     /*GETH_TC.002*/
-        gethSFR->SKEWCTL.B.RXCFG = config->rgmiiRxSkewControl;     /*GETH_TC.002*/
-    }
-
     IfxGeth_dma_applySoftwareReset(gethSFR);
-
-    IfxStm_waitTicks(&MODULE_STM0, 4); /*GETH_TC.002. Wait min 4 fSPB cycles after s/w reset*/
 
     /* wait until reset is finished or timeout. */
     {
@@ -445,7 +426,6 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
                     .txDescrList           = &IfxGeth_Eth_txDescrList[gethIndex][0],
                     .txBuffer1StartAddress = NULL_PTR,
                     .txBuffer1Size         = 256,
-                    .enableOSF             = FALSE,
                 },
 
                 {
@@ -454,7 +434,6 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
                     .txDescrList           = &IfxGeth_Eth_txDescrList[gethIndex][1],
                     .txBuffer1StartAddress = NULL_PTR,
                     .txBuffer1Size         = 256,
-                    .enableOSF             = FALSE,
                 },
 
                 {
@@ -463,7 +442,6 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
                     .txDescrList           = &IfxGeth_Eth_txDescrList[gethIndex][2],
                     .txBuffer1StartAddress = NULL_PTR,
                     .txBuffer1Size         = 256,
-                    .enableOSF             = FALSE,
                 },
 
                 {
@@ -472,7 +450,6 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
                     .txDescrList           = &IfxGeth_Eth_txDescrList[gethIndex][3],
                     .txBuffer1StartAddress = NULL_PTR,
                     .txBuffer1Size         = 256,
-                    .enableOSF             = FALSE,
                 },
             },
 
@@ -561,9 +538,7 @@ void IfxGeth_Eth_initModuleConfig(IfxGeth_Eth_Config *config, Ifx_GETH *gethSFR)
                     .provider  = IfxSrc_Tos_cpu0,
                 },
             },
-        },
-        .rgmiiTxSkewControl = 0,
-        .rgmiiRxSkewControl = 0
+        }
     };
 
     /* Default Configuration */
@@ -698,7 +673,7 @@ void IfxGeth_Eth_sendTransmitBuffer(IfxGeth_Eth *geth, uint32 packetLength, IfxG
         {
             descr->TDES3.R.LD  = 0;
             descr->TDES3.R.FD  = 0;
-            descr->TDES2.R.IOC = 0;                                        /* Clear the IOC bits for intermeditate buffers */
+            descr->TDES2.R.IOC = 0;                                          /* Clear the IOC bits for intermeditate buffers */
             descr->TDES2.R.B1L = geth->txChannel[channelId].txBuf1Size;
             packetLength      -= bufferLength;
         }

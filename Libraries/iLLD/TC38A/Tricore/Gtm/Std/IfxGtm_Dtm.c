@@ -2,9 +2,8 @@
  * \file IfxGtm_Dtm.c
  * \brief GTM  basic functionality
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  *
- *
  */
 
 /******************************************************************************/
@@ -71,7 +69,7 @@ Ifx_GTM_CDTM_DTM *IfxGtm_Dtm_getDtmPointer(Ifx_GTM *gtm, IfxGtm_Cdtm cdtmIndex, 
 float32 IfxGtm_Dtm_getClockFrequency(Ifx_GTM *gtm, IfxGtm_Cdtm cdtmIndex, IfxGtm_Dtm dtmIndex)
 {
     Ifx_GTM_CDTM_DTM *dtm;
-    float32           frequency = 0.0f;
+    float32           frequency = 0.0;
 
     dtm = IfxGtm_Dtm_getDtmPointer(gtm, cdtmIndex, dtmIndex);
 

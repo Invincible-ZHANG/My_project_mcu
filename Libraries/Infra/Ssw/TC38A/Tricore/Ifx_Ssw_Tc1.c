@@ -2,7 +2,7 @@
  * \file Ifx_Ssw_Tc1.c
  * \brief Startup Software for Core1
  *
- * \version iLLD_1_0_1_16_1
+ * \version iLLD_1_0_1_12_0
  * \copyright Copyright (c) 2018 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -67,6 +67,7 @@
 IFX_SSW_COMMON_LINKER_SYMBOLS();
 IFX_SSW_CORE_LINKER_SYMBOLS(1);
 
+extern void core1_main(void);
 #if defined(__TASKING__)
 __asm("\t .extern core1_main");
 #endif
@@ -80,8 +81,6 @@ __asm("\t .extern core1_main");
 *********************************************************************************/
 /*Add options to eliminate usage of stack pointers unnecessarily*/
 #if defined(__HIGHTEC__)
-#pragma GCC optimize "O2"
-#elif defined(__GNUC__) && !defined(__HIGHTEC__)
 #pragma GCC optimize "O2"
 #endif
 
@@ -164,57 +163,28 @@ void __Core1_start(void)
     /*Initialize CPU Private Global Variables*/
     //TODO : This implementation is done once all compilers support this
 #if (IFX_CFG_SSW_ENABLE_INDIVIDUAL_C_INIT != 0)
-    /* Hook functions to initialize application specific HW extensions */
-        if(hardware_init_hook)
-        {
-        	hardware_init_hook();
-        }
-
-        /* Hook functions to initialize application specific SW extensions */
-        if(software_init_hook)
-        {
-        	software_init_hook();
-        }
-
-        /* Initialization of C runtime variables and CPP constructors and destructors */
-        (void)Ifx_Ssw_doCppInit();
+    (void)Ifx_Ssw_C_Init();
 #endif
 
     /*Call main function of Cpu1 */
-#ifdef IFX_CFG_SSW_RETURN_FROM_MAIN
-    {
-        extern int core1_main(void);
-        int status= core1_main();        /* Call main function of CPU2 */
-#if (IFX_CFG_SSW_ENABLE_INDIVIDUAL_C_INIT != 0)
-        Ifx_Ssw_doCppExit(status);
-#else /* (IFX_CFG_SSW_ENABLE_INDIVIDUAL_C_INIT != 0) */
-        (void)status;     /* Added to avoid "Unused parameter warning" */
-#endif /* (IFX_CFG_SSW_ENABLE_INDIVIDUAL_C_INIT != 0) */
-    }
-#else /* IFX_CFG_SSW_RETURN_FROM_MAIN */
-    extern void core1_main(void);
-    Ifx_Ssw_jumpToFunction(core1_main);  /* Jump to main function of CPU2 */
-#endif /* IFX_CFG_SSW_RETURN_FROM_MAIN */
-
-    /* Go into infinite loop, normally the code shall not reach here */
-    Ifx_Ssw_infiniteLoop();
+    Ifx_Ssw_jumpToFunction(core1_main);
 }
 
 /******************************************************************************
  *                        reset vector address                                *
  *****************************************************************************/
+#if defined(__HIGHTEC__)
+#pragma section
+#pragma section ".start_cpu1" x
+#endif
 #if defined(__TASKING__)
 #pragma protect on
 #pragma section code "start_cpu1"
-#elif defined(__HIGHTEC__)
-#pragma section
-#pragma section ".start_cpu1" x
-#elif defined(__GNUC__) && !defined(__HIGHTEC__)
-#pragma section
-#pragma section ".start_cpu1" x
-#elif defined(__DCC__)
+#endif
+#if defined(__DCC__)
 #pragma section CODE ".start_cpu1" X
-#elif defined(__ghs__)
+#endif
+#if defined(__ghs__)
 #pragma ghs section text=".start_cpu1"
 #endif
 
@@ -224,22 +194,21 @@ void _START1(void)
 }
 
 /* reset the sections defined above, to normal region */
+#if defined(__HIGHTEC__)
+#pragma section
+#endif
 #if defined(__TASKING__)
 #pragma protect restore
 #pragma section code restore
-#elif defined(__HIGHTEC__)
-#pragma section
-#elif defined(__GNUC__) && !defined(__HIGHTEC__)
-#pragma section
-#elif defined(__DCC__)
+#endif
+#if defined(__DCC__)
 #pragma section CODE
-#elif defined(__ghs__)
+#endif
+#if defined(__ghs__)
 #pragma ghs section text=default
 #endif
 
 /*Restore the options to command line provided ones*/
 #if defined(__HIGHTEC__)
-#pragma GCC reset_options
-#elif defined(__GNUC__) && !defined(__HIGHTEC__)
 #pragma GCC reset_options
 #endif

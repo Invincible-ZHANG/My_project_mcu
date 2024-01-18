@@ -2,9 +2,8 @@
  * \file IfxGtm_Atom_Timer.c
  * \brief GTM TIMER details
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2022 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -37,7 +36,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  */
 
@@ -109,7 +107,7 @@ void IfxGtm_Atom_Timer_disableUpdate(IfxGtm_Atom_Timer *driver)
 
 float32 IfxGtm_Atom_Timer_getFrequency(IfxGtm_Atom_Timer *driver)
 {
-    return 1.0f / IfxStdIf_Timer_tickToS(driver->base.clockFreq, driver->base.period);
+    return 1.0 / IfxStdIf_Timer_tickToS(driver->base.clockFreq, driver->base.period);
 }
 
 
@@ -139,7 +137,7 @@ volatile uint32 *IfxGtm_Atom_Timer_getPointer(IfxGtm_Atom_Timer *driver)
 
 float32 IfxGtm_Atom_Timer_getResolution(IfxGtm_Atom_Timer *driver)
 {
-    return 1.0f / driver->base.clockFreq;
+    return 1.0 / driver->base.clockFreq;
 }
 
 
@@ -214,7 +212,7 @@ boolean IfxGtm_Atom_Timer_init(IfxGtm_Atom_Timer *driver, const IfxGtm_Atom_Time
 
     IfxGtm_Atom_Timer_updateInputFrequency(driver);
 
-    if ((config->base.minResolution > 0) && ((1.0f / base->clockFreq) > config->base.minResolution))
+    if ((config->base.minResolution > 0) && ((1.0 / base->clockFreq) > config->base.minResolution))
     {
         result = FALSE;
         IFX_ASSERT(IFX_VERBOSE_LEVEL_ERROR, FALSE);
@@ -223,7 +221,7 @@ boolean IfxGtm_Atom_Timer_init(IfxGtm_Atom_Timer *driver, const IfxGtm_Atom_Time
     {}
 
     IfxGtm_Atom_Timer_setFrequency(driver, config->base.frequency);
-    driver->offset = IfxStdIf_Timer_sToTick(driver->base.clockFreq, 1.0f / config->base.frequency * config->base.startOffset);
+    driver->offset = IfxStdIf_Timer_sToTick(driver->base.clockFreq, 1.0 / config->base.frequency * config->base.startOffset);
 
     IfxGtm_Atom_Ch_setCounterValue(driver->atom, driver->timerChannel, driver->offset);
 
@@ -348,7 +346,7 @@ void IfxGtm_Atom_Timer_run(IfxGtm_Atom_Timer *driver)
 
 boolean IfxGtm_Atom_Timer_setFrequency(IfxGtm_Atom_Timer *driver, float32 frequency)
 {
-    Ifx_TimerValue period = IfxStdIf_Timer_sToTick(driver->base.clockFreq, 1.0f / frequency);
+    Ifx_TimerValue period = IfxStdIf_Timer_sToTick(driver->base.clockFreq, 1.0 / frequency);
 
     return IfxGtm_Atom_Timer_setPeriod(driver, period);
 }

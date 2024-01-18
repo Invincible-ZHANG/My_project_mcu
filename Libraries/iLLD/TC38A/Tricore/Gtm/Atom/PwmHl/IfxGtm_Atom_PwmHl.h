@@ -3,7 +3,7 @@
  * \brief GTM PWMHL details
  * \ingroup IfxLld_Gtm
  *
- * \version iLLD_1_0_1_16_1
+ * \version iLLD_1_0_1_12_0
  * \copyright Copyright (c) 2020 Infineon Technologies AG. All rights reserved.
  *
  *

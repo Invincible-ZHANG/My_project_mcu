@@ -3,7 +3,7 @@
  * \brief SCU on-chip implementation data
  * \ingroup IfxLld_Scu
  *
- * \version iLLD_1_0_1_16_1
+ * \version iLLD_1_0_1_12_0
  * \copyright Copyright (c) 2012 Infineon Technologies AG. All rights reserved.
  *
  *
@@ -1261,9 +1261,9 @@
     }
 
 /** \brief Macros to configure FLASH.FCON registers */
-#define IFXSCU_CFG_FLASH_WAITSTATE_MSK (0x0000073FU)
+#define IFXSCU_CFG_FLASH_WAITSTATE_MSK 0
 
-#define IFXSCU_CFG_FLASH_WAITSTATE_VAL_BASIC_(pll0Freq) (0x00000105U)
+#define IFXSCU_CFG_FLASH_WAITSTATE_VAL_BASIC_(pll0Freq) 0
 
 #define IFXSCU_CFG_FLASH_WAITSTATE_VAL_BASIC(pll0Freq)  IFXSCU_CFG_FLASH_WAITSTATE_VAL_BASIC_(pll0Freq)
 

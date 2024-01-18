@@ -3,9 +3,8 @@
  * \brief CPU  basic functionality
  * \ingroup IfxLld_Cpu
  *
- * \version iLLD_1_0_1_16_1
- * \copyright Copyright (c) 2021 Infineon Technologies AG. All rights reserved.
- *
+ * \version iLLD_1_0_1_12_0
+ * \copyright Copyright (c) 2019 Infineon Technologies AG. All rights reserved.
  *
  *
  *                                 IMPORTANT NOTICE
@@ -38,7 +37,6 @@
  * FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
- *
  *
  *
  * \defgroup IfxLld_Cpu_Std_Core Cpu Core Functions
@@ -246,8 +244,8 @@ IFX_INLINE IfxCpu_ResourceCpu IfxCpu_getCoreIndex(void);
  *
  * This API can initialize the CSA of the host CPU where this API is called. This API
  * shall not be used to initialize the CSA of another CPU
- * \param csaBegin Pointer to start of context save area, shall not be NULL pointer
- * \param csaEnd Pointer to end of context save area, shall be higher address than csaBegin
+ * \param csaBegin Pointer to start of context save area
+ * \param csaEnd Pointer to end of context save area
  * \return None
  */
 IFX_INLINE void IfxCpu_initCSA(uint32 *csaBegin, uint32 *csaEnd);
@@ -951,16 +949,16 @@ IFX_INLINE boolean IfxCpu_getPerformanceCounterStickyOverflow(uint16 address)
 IFX_INLINE void IfxCpu_initCSA(uint32 *csaBegin, uint32 *csaEnd)
 {
     uint32  k;
-    uint32  nxt_cxi_val = 0U;
-    uint32 *prvCsa      = csaBegin;
+    uint32  nxt_cxi_val = 0;
+    uint32 *prvCsa      = 0U;
     uint32 *nxtCsa      = csaBegin;
     uint32  numOfCsa    = (((uint32)csaEnd - (uint32)csaBegin) / 64U);
 
-    for (k = 0U; k < numOfCsa; k++)
+    for (k = 0; k < numOfCsa; k++)
     {
-        nxt_cxi_val = ((uint32)nxtCsa & (0XFU << 28U)) >> 12U | ((uint32)nxtCsa & (0XFFFFU << 6U)) >> 6U;
+        nxt_cxi_val = ((uint32)nxtCsa & (0XFU << 28)) >> 12 | ((uint32)nxtCsa & (0XFFFFU << 6)) >> 6;
 
-        if (k == 0U)
+        if (k == 0)
         {
             __mtcr(CPU_FCX, nxt_cxi_val);   /* store the new pcxi value to LCX */
         }
@@ -975,10 +973,10 @@ IFX_INLINE void IfxCpu_initCSA(uint32 *csaBegin, uint32 *csaEnd)
         }
 
         prvCsa  = (uint32 *)nxtCsa;
-        nxtCsa += 16U;           /* next CSA */
+        nxtCsa += 16;           /* next CSA */
     }
 
-    *prvCsa = 0U;
+    *prvCsa = 0;
 }
 
 
