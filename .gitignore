@@ -1,0 +1,30 @@
+# 忽略 IDE/编辑器相关
+.vscode/
+.settings/
+.metadata/
+.ads/
+
+# 忽略构建输出目录
+Debug/
+Configurations/
+Libraries/
+
+# 忽略 Eclipse/IDE 项目文件
+.project
+.cproject
+.exportedSettings
+
+# 忽略 Git 以外的隐藏文件夹
+*.swp
+*.swo
+*.tmp
+
+# 保留源代码文件
+!*.c
+!*.h
+!*.lsl
+!*.md
+
+
+
+*.launch
